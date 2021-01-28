@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <title>
+      Markdown Syntax Guide | site title
+    </title>
+
+  <link rel="shortcut icon" type="image/png" href="https://example.com/static/image/icon.png">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link id="style" rel="stylesheet" type="text/css" href="../../main.css">
+</head>
+
+<h2>
+  Markdown Syntax Guide
+</h2>
+
+<div class="date">
+  
+</div>
+
+  /code
+
+  +markdown
+
+<p>
+  <p>This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.</p>
+<h3>Headings</h3>
+<p>The following HTML <code>&lt;h1&gt;—&lt;h6&gt;</code> elements represent six levels of section headings. <code>&lt;h1&gt;</code> is the highest section level while <code>&lt;h6&gt;</code> is the lowest.</p>
+<h1>H1</h1>
+<h2>H2</h2>
+<h3>H3</h3>
+<h4>H4</h4>
+<h5>H5</h5>
+<h6>H6</h6>
+<h3>Paragraph</h3>
+<p>Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur? Quianimin porecus evelectur, cum que nis nust voloribus ratem aut omnimi, sitatur? Quiatem. Nam, omnis sum am facea corem alique molestrunt et eos evelece arcillit ut aut eos eos nus, sin conecerem erum fuga. Ri oditatquam, ad quibus unda veliamenimin cusam et facea ipsamus es exerum sitate dolores editium rerore eost, temped molorro ratiae volorro te reribus dolorer sperchicium faceata tiustia prat.</p>
+<p>Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sapicia is sinveli squiatum, core et que aut hariosam ex eat.</p>
+<h3>Blockquotes</h3>
+<blockquote>
+<p>Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur?</p>
+</blockquote>
+<h3>Code</h3>
+<p><code>inline code block</code></p>
+<pre><code class="language-rust">use std::io;
+
+fn main() {
+    println!(&quot;Guess the number!&quot;);
+
+    println!(&quot;Please input your guess.&quot;);
+
+    let mut guess = String::new();
+
+    io::stdin()
+        .read_line(&amp;mut guess)
+        .expect(&quot;Failed to read line&quot;);
+
+    println!(&quot;You guessed: {}&quot;, guess);
+}
+</code></pre>
+<h3>List Types</h3>
+<h4>Ordered List</h4>
+<ol>
+<li>First item</li>
+<li>Second item</li>
+<li>Third item</li>
+</ol>
+<h3>Unordered List</h3>
+<ul>
+<li>List item</li>
+<li>Another item</li>
+<li>And another item
+<ul>
+<li>orange</li>
+<li>apple
+<ul>
+<li>banana</li>
+<li>watermelon</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+</p>
+
+<div class="footer">
+  <a href="https://example.com">site title</a> | built in Nim
+</div>
