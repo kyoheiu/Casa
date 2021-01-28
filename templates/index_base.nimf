@@ -1,0 +1,28 @@
+#? stdtmpl(subsChar = '$', metaChar = '#')
+#proc generateIndexHtml(config_title, base_url: string, sortedPages: seq): string =
+#  result = ""
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <title>
+      $config_title
+    </title>
+
+  <link rel="shortcut icon" type="image/png" href="$baseurl/static/image/icon.png">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link id="style" rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<h1>$config_title</h2>
+
+<ul>
+#for items in sortedPages:
+  <li><a href="$base_url/content/$items.name/index.html">$items.date $items.title<a></li>
+#end for
+</ul>
+
+<div class="footer">
+  <a href="/">$config_title</a> | built in Nim
+</div>

@@ -1,0 +1,41 @@
+#? stdtmpl(subsChar = '$', metaChar = '#')
+#proc generatePageHtml(config_title, base_url, page_date, page_title,
+#                      page_content: string, page_categories, page_tags: seq): string =
+#  result = ""
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <title>
+      $page_title | $config_title
+    </title>
+
+  <link rel="shortcut icon" type="image/png" href="$baseurl/static/image/icon.png">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link id="style" rel="stylesheet" type="text/css" href="../../main.css">
+</head>
+
+<h2>
+  $page_title
+</h2>
+
+<div class="date">
+  $page_date
+</div>
+
+#for category in items(page_categories) :
+  /$category
+#end for
+
+#for tag in items(page_tags) :
+  +$tag
+#end for
+
+<p>
+  $page_content
+</p>
+
+<div class="footer">
+  <a href="$base_url">$config_title</a> | built in Nim
+</div>
