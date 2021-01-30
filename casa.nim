@@ -9,24 +9,21 @@ type
     title: string
     name: string
 
-var pages = newSeq[PageConfig]()
-
 var
-  page_title, page_content: string
-  page_date, page_date_fmt: string
-  page_categories, page_tags: seq[JsonNode]
+  pages = newSeq[PageConfig]()
   countChange = 0
 
 var
-  file_name: string
+  page_date, page_title, page_content: string
+  page_categories, page_tags: seq[JsonNode]
   config_title, base_url: string
+  file_name: string
 
 const
   configTemplate = """
 base_url = "https://example.com"
 title = "site title"
 """
-  publicIndex = "public/index.html"
 
 proc build() =
   removeDir("public")
