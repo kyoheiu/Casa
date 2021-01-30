@@ -25,6 +25,11 @@ base_url = "https://example.com"
 title = "site title"
 """
 
+proc parsePageContentToHtml(contentFileDir: string): string = 
+  fileName = splitPath(contentFileDIr).tail
+  let mdFile = readFile(contentFileDir & "/" & file_name & ".md")
+  result = markdown(mdFile)
+
 proc build() =
   removeDir("public")
   createDir("public")
@@ -34,10 +39,7 @@ proc build() =
   for cssFile in walkFiles("css/*.css"):
     copyFileToDIr(cssfile, "public")
   for contentFileDir in walkDirs("content/*"):
-    file_name = splitPath(contentFileDir).tail
-    let
-      mdFile = readFile(contentFileDir & "/" & file_name & ".md")
-    page_content = markdown(mdFile)
+    page_content = parsePageContentToHtml(contentFileDir)
     let frontMatter = parseFile(contentFileDir & "/" & file_name & ".json")
     page_title = frontMatter["title"].getStr()
     page_date = frontMatter["date"].getStr()
