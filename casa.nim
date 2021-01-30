@@ -1,11 +1,7 @@
-import markdown, unicode, parsetoml, os, tables, strutils, algorithm
+import markdown, unicode, json, os, tables, strutils, algorithm
 
 include "templates/page_base.nimf"
 include "templates/index_base.nimf"
-
-proc extractOnlyName(path: string): string =
-  let (dir, name, ext) = splitFile(path)
-  return name
 
 type
   PageConfig = object
@@ -18,7 +14,7 @@ var pages = newSeq[PageConfig]()
 var
   page_title, page_content: string
   page_date, page_date_fmt: string
-  page_categories, page_tags: seq[TomlValueRef]
+  page_categories, page_tags: seq[JsonNode]
   countChange = 0
 
 var
@@ -35,52 +31,40 @@ title = "site title"
 proc build() =
   removeDir("public")
   createDir("public")
-  let config = parsetoml.parseFile("config.toml")
-  config_title = config["title"].getStr()
-  base_url = config["base_url"].getStr()
-  for kind, path in walkDir("css"):
-    copyFileToDIr(path, "public")
-  for kind, path in walkDir("content"):
-    file_name = extractOnlyName(path)
+  let config = parseFile("config.json")
+  config_title = config["title"].getStr("notitle")
+  base_url = config["base_url"].getStr("nourl")
+  for cssFile in walkFiles("css/*.css"):
+    copyFileToDIr(cssfile, "public")
+  for contentFileDir in walkDirs("content/*"):
+    file_name = splitPath(contentFileDir).tail
     let
-      mdFile = readFile(path)
-      separators = toRunes("+++")
-    var i = 0
-    for word in split(mdFile, separators, maxsplit=6):
-      if i == 3:
-        let frontmatter = parsetoml.parseString(word)
-        page_title = frontmatter["title"].getStr()
-        page_date  = frontmatter["date"].getStr()
-        page_categories = frontmatter["taxonomies"]["categories"].getElems()
-        page_tags = frontmatter["taxonomies"]["tags"].getElems()
-        pages.add(PageConfig(date: page_date, title: page_title, name: file_name))
-        inc(i)
-      elif i == 6:
-        page_content = markdown(word)
-        inc(i)
-      else:
-        inc(i)
+      mdFile = readFile(contentFileDir & "/" & file_name & ".md")
+    page_content = markdown(mdFile)
+    let frontMatter = parseFile(contentFileDir & "/" & file_name & ".json")
+    page_title = frontMatter["title"].getStr()
+    page_date = frontMatter["date"].getStr()
+    page_categories = frontMatter["categories"].getElems()
+    page_tags = frontMatter["categories"].getElems()
+    pages.add(PageConfig(date: page_date, title: page_title, name: file_name))
     let
       publicDirPath  = "public/content/" & file_name
       publicFilePath = publicDirPath & "/index.html"
-      pageHtml   = generatePageHtml(config_title, base_url, page_date_fmt, page_title, page_content, page_categories, page_tags)
+      pageHtml   = generatePageHtml(config_title, base_url, page_date, page_title, page_content, page_categories, page_tags)
     createDir(publicDirPath)
     writeFile(publicFilePath, pageHtml)
+    inc(countChange)
   let
-    sortedPages = sortedByIt(pages, it.date)
+    sortedPages = pages.sortedByIt(it.date).reversed
     indexHtml = generateIndexHtml(config_title, base_url, sortedPages)
-  echo sortedPages
   writeFile("public/index.html", indexHtml)
   echo $countChange & " page(s) created."
-
 
 proc init(siteName: string) =
   createDir siteName
   createDir siteName & "/content"
   createDir siteName & "/templates"
   createDir siteName & "/static"
-  createDir siteName & "/public"
-  createDir siteName & "/public/content"
   writeFile(siteName & "/config.toml", configTemplate)
 
 when isMainModule:
