@@ -54,27 +54,18 @@ proc parsePageConfig(frontMatter: JsonNode, fileName: string): PageConfig =
     pageConfig = PageConfig(date: pageDate, title: pageTitle, name: fileName, category: pageCategories, tag: pageTags)
   result = pageConfig
 
-# proc parsePageTaxonomies(frontMatter: JsonNode): PageTaxonomies = 
-#   let
-#     pageCategories = frontMatter["categories"].getElems()
-#     pageTags = frontMatter["categories"].getElems()
-#     pageTaxonomies = PageTaxonomies(category: pageCategories, tag: pageTags)
-#   result = pageTaxonomies
-
 proc build() =
   removeDir("public")
-  createDir("public")
+  createDir("public") # 0.000s
   siteConfig = parseSiteConfig("config.json")
   for cssFile in walkFiles("css/*.css"):
-    copyFileToDIr(cssfile, "public")
+    copyFileToDIr(cssfile, "public") # 0.005s
   for contentFileDir in walkDirs("content/*"):
-    fileName = splitPath(contentFileDIr).tail
-    frontMatter = parseFile(contentFileDir & "/" & fileName & ".json")
-    pageContent = parsePageContentToHtml(contentFileDir, fileName)
+    fileName = splitPath(contentFileDIr).tail # 0.005s 
+    frontMatter = parseFile(contentFileDir & "/" & fileName & ".json") # 0.006s
+    pageContent = parsePageContentToHtml(contentFileDir, fileName) # 0.0770s
     pageConfig = parsePageConfig(frontMatter, fileName)
-    pageConfigList.add(pageConfig)
-    # pageTaxonomies = parsePageTaxonomies(frontMatter)
-    # pageTaxonomiesList.add(pageTaxonomies)
+    pageConfigList.add(pageConfig) # 0.0771s
     let
       publicDirPath  = "public/content/" & fileName
       publicFilePath = publicDirPath & "/index.html"
