@@ -4,58 +4,89 @@ include "templates/page_base.nimf"
 include "templates/index_base.nimf"
 
 type
+  SiteConfig = object
+    title: string
+    url: string
   PageConfig = object
     date: string
     title: string
     name: string
+  PageTaxonomies = object
+    category: seq[JsonNode]
+    tag: seq[JsonNode]
 
 var
-  pages = newSeq[PageConfig]()
   countChange = 0
 
 var
-  page_date, page_title, page_content: string
-  page_categories, page_tags: seq[JsonNode]
-  config_title, base_url: string
-  file_name: string
+  frontMatter: JsonNode
+  pageDate, pageTitle, pageContent: string
+  pageCategories, pageTags: seq[JsonNode]
+  pageConfig: PageConfig
+  pageTaxonomies: PageTaxonomies
+  pageConfigList: seq[PageConfig]
+  pageTaxonomiesList: seq[PageTaxonomies]
+  siteConfig: SiteConfig
+  siteTitle, siteUrl: string
+  fileName: string
+  countContent: int
 
 const
   configTemplate = """
-base_url = "https://example.com"
-title = "site title"
+siteUrl = "https://example.com"
+siteTitle = "site title"
 """
 
-proc parsePageContentToHtml(contentFileDir: string): string = 
-  fileName = splitPath(contentFileDIr).tail
-  let mdFile = readFile(contentFileDir & "/" & file_name & ".md")
+proc parseSiteConfig(file: string): SiteConfig =
+  let siteConfigJson = parseFile(file)
+  siteTitle = siteConfigJson["siteTitle"].getStr()
+  siteUrl = siteConfigJson["siteUrl"].getStr()
+  siteConfig = SiteConfig(title: siteTitle, url: siteUrl)
+  return siteConfig
+
+
+proc parsePageContentToHtml(contentFileDir: string, fileName: string): string = 
+  let mdFile = readFile(contentFileDir & "/" & fileName & ".md")
   result = markdown(mdFile)
+
+proc parsePageConfig(frontMatter: JsonNode, fileName: string): PageConfig =
+  let
+    pageDate = frontMatter["date"].getStr()
+    pageTitle = frontMatter["title"].getStr()
+    pageConfig = PageConfig(date: pageDate, title: pageTitle, name: fileName)
+  result = pageConfig
+
+proc parsePageTaxonomies(frontMatter: JsonNode): PageTaxonomies = 
+  let
+    pageCategories = frontMatter["categories"].getElems()
+    pageTags = frontMatter["categories"].getElems()
+    pageTaxonomies = PageTaxonomies(category: pageCategories, tag: pageTags)
+  result = pageTaxonomies
 
 proc build() =
   removeDir("public")
   createDir("public")
-  let config = parseFile("config.json")
-  config_title = config["title"].getStr("notitle")
-  base_url = config["base_url"].getStr("nourl")
+  siteConfig = parseSiteConfig("config.json")
   for cssFile in walkFiles("css/*.css"):
     copyFileToDIr(cssfile, "public")
   for contentFileDir in walkDirs("content/*"):
-    page_content = parsePageContentToHtml(contentFileDir)
-    let frontMatter = parseFile(contentFileDir & "/" & file_name & ".json")
-    page_title = frontMatter["title"].getStr()
-    page_date = frontMatter["date"].getStr()
-    page_categories = frontMatter["categories"].getElems()
-    page_tags = frontMatter["categories"].getElems()
-    pages.add(PageConfig(date: page_date, title: page_title, name: file_name))
+    fileName = splitPath(contentFileDIr).tail
+    frontMatter = parseFile(contentFileDir & "/" & fileName & ".json")
+    pageContent = parsePageContentToHtml(contentFileDir, fileName)
+    pageConfig = parsePageConfig(frontMatter, fileName)
+    pageConfigList.add(pageConfig)
+    pageTaxonomies = parsePageTaxonomies(frontMatter)
+    pageTaxonomiesList.add(pageTaxonomies)
     let
-      publicDirPath  = "public/content/" & file_name
+      publicDirPath  = "public/content/" & fileName
       publicFilePath = publicDirPath & "/index.html"
-      pageHtml   = generatePageHtml(config_title, base_url, page_date, page_title, page_content, page_categories, page_tags)
+      pageHtml   = generatePageHtml(siteTitle, siteUrl, pageContent, pageConfig.date, pageConfig.title, pageTaxonomies.category, pageTaxonomies.tag)
     createDir(publicDirPath)
     writeFile(publicFilePath, pageHtml)
     inc(countChange)
   let
-    sortedPages = pages.sortedByIt(it.date).reversed
-    indexHtml = generateIndexHtml(config_title, base_url, sortedPages)
+    sortedPageConfigList = pageConfigList.sortedByIt((it.date, it.name)).reversed
+    indexHtml = generateIndexHtml(siteTitle, siteUrl, sortedPageConfigList)
   writeFile("public/index.html", indexHtml)
   echo $countChange & " page(s) created."
 

@@ -1,6 +1,5 @@
 #? stdtmpl(subsChar = '$', metaChar = '#')
-#proc generatePageHtml(config_title, base_url, page_date, page_title,
-#                      page_content: string, page_categories, page_tags: seq): string =
+#proc generatePageHtml(siteTitle, siteUrl, pageContent, pageDate, pageTitle: string, pageCategories, pageTags: seq): string =
 #  result = ""
 <!DOCTYPE html>
 <html lang="en">
@@ -8,34 +7,34 @@
 <head>
   <meta charset="utf-8">
     <title>
-      $page_title | $config_title
+      $pageTitle | $siteTitle
     </title>
 
-  <link rel="shortcut icon" type="image/png" href="$baseurl/static/image/icon.png">
+  <link rel="shortcut icon" type="image/png" href="$siteUrl/static/image/icon.png">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link id="style" rel="stylesheet" type="text/css" href="../../main.css">
 </head>
 
 <h2>
-  $page_title
+  $pageTitle
 </h2>
 
 <div class="date">
-  $page_date
+  $pageDate
 </div>
 
-#for category in items(page_categories) :
+#for category in items(pageCategories) :
   /$category
 #end for
 
-#for tag in items(page_tags) :
+#for tag in items(pageTags) :
   +$tag
 #end for
 
 <p>
-  $page_content
+  $pageContent
 </p>
 
 <div class="footer">
-  <a href="$base_url">$config_title</a> | built in Nim
+  <a href="$siteUrl">$siteTitle</a> | built in Nim
 </div>
