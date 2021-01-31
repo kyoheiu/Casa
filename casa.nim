@@ -11,7 +11,6 @@ type
     date: string
     title: string
     name: string
-  PageTaxonomies = object
     category: seq[JsonNode]
     tag: seq[JsonNode]
 
@@ -23,13 +22,10 @@ var
   pageDate, pageTitle, pageContent: string
   pageCategories, pageTags: seq[JsonNode]
   pageConfig: PageConfig
-  pageTaxonomies: PageTaxonomies
   pageConfigList: seq[PageConfig]
-  pageTaxonomiesList: seq[PageTaxonomies]
   siteConfig: SiteConfig
   siteTitle, siteUrl: string
   fileName: string
-  countContent: int
 
 const
   configTemplate = """
@@ -53,15 +49,17 @@ proc parsePageConfig(frontMatter: JsonNode, fileName: string): PageConfig =
   let
     pageDate = frontMatter["date"].getStr()
     pageTitle = frontMatter["title"].getStr()
-    pageConfig = PageConfig(date: pageDate, title: pageTitle, name: fileName)
-  result = pageConfig
-
-proc parsePageTaxonomies(frontMatter: JsonNode): PageTaxonomies = 
-  let
     pageCategories = frontMatter["categories"].getElems()
     pageTags = frontMatter["categories"].getElems()
-    pageTaxonomies = PageTaxonomies(category: pageCategories, tag: pageTags)
-  result = pageTaxonomies
+    pageConfig = PageConfig(date: pageDate, title: pageTitle, name: fileName, category: pageCategories, tag: pageTags)
+  result = pageConfig
+
+# proc parsePageTaxonomies(frontMatter: JsonNode): PageTaxonomies = 
+#   let
+#     pageCategories = frontMatter["categories"].getElems()
+#     pageTags = frontMatter["categories"].getElems()
+#     pageTaxonomies = PageTaxonomies(category: pageCategories, tag: pageTags)
+#   result = pageTaxonomies
 
 proc build() =
   removeDir("public")
@@ -75,12 +73,12 @@ proc build() =
     pageContent = parsePageContentToHtml(contentFileDir, fileName)
     pageConfig = parsePageConfig(frontMatter, fileName)
     pageConfigList.add(pageConfig)
-    pageTaxonomies = parsePageTaxonomies(frontMatter)
-    pageTaxonomiesList.add(pageTaxonomies)
+    # pageTaxonomies = parsePageTaxonomies(frontMatter)
+    # pageTaxonomiesList.add(pageTaxonomies)
     let
       publicDirPath  = "public/content/" & fileName
       publicFilePath = publicDirPath & "/index.html"
-      pageHtml   = generatePageHtml(siteTitle, siteUrl, pageContent, pageConfig.date, pageConfig.title, pageTaxonomies.category, pageTaxonomies.tag)
+      pageHtml   = generatePageHtml(siteTitle, siteUrl, pageContent, pageConfig.date, pageConfig.title, pageConfig.category, pageConfig.tag)
     createDir(publicDirPath)
     writeFile(publicFilePath, pageHtml)
     inc(countChange)
