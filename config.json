@@ -1,4 +1,4 @@
 {
-  "base_url": "https://example.com",
-  "title": "site title"
+  "siteUrl": "https://example.com",
+  "siteTitle": "site title"
 }
