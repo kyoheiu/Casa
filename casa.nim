@@ -11,9 +11,9 @@ type
   PageConfig = object
     date: string
     title: string
-    name: string
-    category: seq[JsonNode]
-    tag: seq[JsonNode]
+    categories: seq[string]
+    tags: seq[string]
+    filename: string
 
 var
   countChange = 0
@@ -21,7 +21,7 @@ var
 var
   frontMatter: JsonNode
   pageDate, pageTitle, pageContent: string
-  pageCategories, pageTags: seq[JsonNode]
+  pageCategories, pageTags: seq[string]
   pageConfig: PageConfig
   pageConfigList: seq[PageConfig]
   siteConfig: SiteConfig
@@ -41,42 +41,33 @@ proc parseSiteConfig(file: string): SiteConfig =
   siteConfig = SiteConfig(title: siteTitle, url: siteUrl)
   return siteConfig
 
-proc parsePageConfig(frontMatter: JsonNode, fileName: string): PageConfig =
-  let
-    pageDate = frontMatter["date"].getStr()
-    pageTitle = frontMatter["title"].getStr()
-    pageCategories = frontMatter["categories"].getElems()
-    pageTags = frontMatter["categories"].getElems()
-    pageConfig = PageConfig(date: pageDate, title: pageTitle, name: fileName, category: pageCategories, tag: pageTags)
-  result = pageConfig
-
 proc parsePageContentToHtml(contentFileDir: string, fileName: string): string = 
   let mdFile = readFile(contentFileDir & "/" & fileName & ".md")
   result = markdown(mdFile)
 
-proc generateCategoriesList(pageConfigList: seq[PageConfig]): seq[JsonNode] =
-  var categoriesList: seq[seq[JsonNode]]
+proc generateCategoriesList(pageConfigList: seq[PageConfig]): seq[string] =
+  var categoriesList: seq[seq[string]]
   for page in pageConfigList:
-    categoriesList.add(page.category)
+    categoriesList.add(page.categories)
   result = categoriesList.deduplicate.concat
 
-proc generateTagsList(pageConfigList: seq[PageConfig]): seq[JsonNode] =
-  var tagsList: seq[seq[JsonNode]]
+proc generateTagsList(pageConfigList: seq[PageConfig]): seq[string] =
+  var tagsList: seq[seq[string]]
   for page in pageConfigList:
-    tagsList.add(page.tag)
+    tagsList.add(page.tags)
   result = tagsList.deduplicate.concat
 
-proc hasCategory(pageConfigList: seq[PageConfig], categoryName: JsonNode): seq[PageConfig] =
+proc hasCategory(pageConfigList: seq[PageConfig], categoryName: string): seq[PageConfig] =
   var hasCategoryList: seq[PageConfig]
   for pageConfig in pageConfigList:
-    if any(pageConfig.category, proc(x: JsonNode): bool = x == categoryName):
+    if any(pageConfig.categories, proc(x: string): bool = x == categoryName):
       hasCategoryList.add(pageConfig)
   result = hasCategoryList
 
-proc hasTag(pageConfigList: seq[PageConfig], tagName: JsonNode): seq[PageConfig] =
+proc hasTag(pageConfigList: seq[PageConfig], tagName: string): seq[PageConfig] =
   var hasTagList: seq[PageConfig]
   for pageConfig in pageConfigList:
-    if any(pageConfig.tag, proc(x: JsonNode): bool = x == tagName):
+    if any(pageConfig.tags, proc(x: string): bool = x == tagName):
       hasTagList.add(pageConfig)
   result = hasTagList
 
@@ -84,32 +75,35 @@ proc build() =
   removeDir("public")
   createDir("public") # 0.000s
   siteConfig = parseSiteConfig("config.json")
+  # move css file to public
   for cssFile in walkFiles("css/*.css"):
     copyFileToDIr(cssfile, "public") # 0.005s
+  # for each content, generate content-html and config object
   for contentFileDir in walkDirs("content/*"):
     fileName = splitPath(contentFileDIr).tail # 0.005s 
-    frontMatter = parseFile(contentFileDir & "/" & fileName & ".json") # 0.006s
     pageContent = parsePageContentToHtml(contentFileDir, fileName) # 0.0770s
-    pageConfig = parsePageConfig(frontMatter, fileName)
+    frontMatter = parseFile(contentFileDir & "/" & fileName & ".json")
+    frontMatter["filename"] = newJString(fileName)
+    pageConfig = to(frontMatter, PageConfig)
     pageConfigList.add(pageConfig) # 0.0771s
     let
       publicDirPath  = "public/content/" & fileName
       publicFilePath = publicDirPath & "/index.html"
-      pageHtml  = generatePageHtml(siteTitle, siteUrl, pageContent, pageConfig.date, pageConfig.title, pageConfig.category, pageConfig.tag)
+      pageHtml  = generatePageHtml(siteTitle, siteUrl, pageContent, pageConfig.date, pageConfig.title, pageConfig.categories, pageConfig.tags)
     createDir(publicDirPath)
     writeFile(publicFilePath, pageHtml)
     inc(countChange)
+  # generate index.html based on sorted contents list
   let
-    sortedPageConfigList = pageConfigList.sortedByIt((it.date, it.name)).reversed
+    sortedPageConfigList = pageConfigList.sortedByIt((it.date, it.title)).reversed
     indexHtml = generateIndexHtml(siteTitle, siteUrl, sortedPageConfigList)
   writeFile("public/index.html", indexHtml)
-  
+  # generate taxonomies page based on sorted and filtered contents list
   let
     categoriesList = generateCategoriesList(sortedPageConfigList)
     tagsList = generateTagsList(sortedPageConfigList)
     categoryDirPath = "public/categories"
     tagDirPath = "public/tags"
-
   createDir(categoryDirPath)
   createDir(tagDirPath)
   for categoryName in categoriesList:
@@ -118,7 +112,7 @@ proc build() =
   for tagName in tagsList:
     let tagHtml = generateTaxonomiesHtml(siteTitle, siteUrl, tagName, hasTag(sortedPageConfigList, tagName))
     writeFile(tagDirPath & "/" & $tagName & ".html", tagHtml)
-
+  # echo the number of pages
   echo $countChange & " page(s) created."
 
 proc init(siteName: string) =
