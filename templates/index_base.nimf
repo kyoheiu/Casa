@@ -1,5 +1,5 @@
 #? stdtmpl(subsChar = '$', metaChar = '#')
-#proc generateIndexHtml(configTitle, configUrl: string, sortedPageConfigList: seq): string =
+#proc generateIndexHtml(siteTitle, siteUrl: string, sortedPageConfigList: seq): string =
 #  result = ""
 <!DOCTYPE html>
 <html lang="en">
@@ -7,22 +7,22 @@
 <head>
   <meta charset="utf-8">
     <title>
-      $configTitle
+      $siteTitle
     </title>
 
-  <link rel="shortcut icon" type="image/png" href="$configUrl/static/image/icon.png">
+  <link rel="shortcut icon" type="image/png" href="$siteUrl/static/image/icon.png">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link id="style" rel="stylesheet" type="text/css" href="main.css">
 </head>
 
-<h1>$configTitle</h2>
+<h1>$siteTitle</h2>
 
 <ul>
 #for items in sortedPageConfigList:
-  <li><a href="$configUrl/content/$items.name/index.html">$items.date $items.title<a></li>
+  <li><a href="$siteUrl/content/$items.name/index.html">$items.date $items.title<a></li>
 #end for
 </ul>
 
 <div class="footer">
-  <a href="/">$configTitle</a> | built in Nim
+  <a href="/">$siteTitle</a> | built in Nim
 </div>
