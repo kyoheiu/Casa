@@ -19,7 +19,7 @@
 
 <ul>
 #for items in sortedPageConfigList:
-  <li><a href="$siteUrl/content/$items.name/index.html">$items.date $items.title<a></li>
+  <li><a href="$siteUrl/content/$items.filename/index.html">$items.date $items.title<a></li>
 #end for
 </ul>
 
