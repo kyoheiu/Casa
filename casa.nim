@@ -30,8 +30,10 @@ var
 
 const
   configTemplate = """
-siteUrl = "https://example.com"
-siteTitle = "site title"
+{
+  "siteUrl": "https://example.com",
+  "siteTitle": "site title"
+}
 """
 
 proc parseSiteConfig(file: string): SiteConfig =
