@@ -120,7 +120,7 @@ proc init(siteName: string) =
   createDir siteName & "/content"
   createDir siteName & "/templates"
   createDir siteName & "/static"
-  writeFile(siteName & "/config.toml", configTemplate)
+  writeFile(siteName & "/config.json", configTemplate)
 
 when isMainModule:
   import cligen
