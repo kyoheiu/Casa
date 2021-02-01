@@ -24,11 +24,11 @@
 </div>
 
 #for category in items(pageCategories) :
-  /$category
+  <a href="$siteUrl/categories/$category">/$category</a>
 #end for
 
 #for tag in items(pageTags) :
-  +$tag
+  <a href="$siteUrl/tags/$tag">#$tag</a>
 #end for
 
 <p>

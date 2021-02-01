@@ -104,16 +104,14 @@ proc build() =
   let
     categoriesList = generateCategoriesList(sortedPageConfigList)
     tagsList = generateTagsList(sortedPageConfigList)
-    categoryDirPath = "public/categories"
-    tagDirPath = "public/tags"
-  createDir(categoryDirPath)
-  createDir(tagDirPath)
   for categoryName in categoriesList:
     let categoryHtml = generateTaxonomiesHtml(siteTitle, siteUrl, categoryName, hasCategory(sortedPageConfigList, categoryName))
-    writeFile(categoryDirPath & "/" & $categoryName & ".html", categoryHtml)
+    createDir("public/categories/" & categoryName)
+    writeFile("public/categories/" & categoryName & "/index.html", categoryHtml)
   for tagName in tagsList:
     let tagHtml = generateTaxonomiesHtml(siteTitle, siteUrl, tagName, hasTag(sortedPageConfigList, tagName))
-    writeFile(tagDirPath & "/" & $tagName & ".html", tagHtml)
+    createDir("public/tags/" & tagName)
+    writeFile("public/tags/" & tagName & "/index.html", tagHtml)
   # echo the number of pages
   echo $countChange & " page(s) created."
 

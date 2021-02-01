@@ -12,7 +12,7 @@
 
   <link rel="shortcut icon" type="image/png" href="$siteUrl/static/image/icon.png">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link id="style" rel="stylesheet" type="text/css" href="../main.css">
+  <link id="style" rel="stylesheet" type="text/css" href="../../main.css">
 </head>
 
 <h1>$taxonomyName</h2>
