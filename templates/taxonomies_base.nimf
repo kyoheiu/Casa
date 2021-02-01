@@ -1,0 +1,28 @@
+#? stdtmpl(subsChar = '$', metaChar = '#')
+#proc generateTaxonomiesHtml(siteTitle, siteUrl: string, taxonomyName: JsonNode, hasTaxonomiesList: seq): string =
+#  result = ""
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+    <title>
+      taxonomies: $taxonomyName
+    </title>
+
+  <link rel="shortcut icon" type="image/png" href="$siteUrl/static/image/icon.png">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link id="style" rel="stylesheet" type="text/css" href="main.css">
+</head>
+
+<h1>$taxonomyName</h2>
+
+<ul>
+#for items in hasTaxonomiesList:
+  <li><a href="$siteUrl/content/$items.name/index.html">$items.date $items.title<a></li>
+#end for
+</ul>
+
+<div class="footer">
+  <a href="/">$siteTitle</a> | built in Nim
+</div>
