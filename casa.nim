@@ -20,8 +20,7 @@ var
 
 var
   frontMatter: JsonNode
-  pageDate, pageTitle, pageContent: string
-  pageCategories, pageTags: seq[string]
+  pageContent: string
   pageConfig: PageConfig
   pageConfigList: seq[PageConfig]
   siteConfig: SiteConfig
