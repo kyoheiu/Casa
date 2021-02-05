@@ -77,8 +77,7 @@ proc build() =
   createDir("public") # 0.000s
   siteConfig = parseSiteConfig("config.json")
   # move css file to public
-  for cssFile in walkFiles("css/*.css"):
-    copyFileToDIr(cssfile, "public") # 0.005s
+  copyDir("css", "public/css")
   # for each content, generate content-html and config object
   for contentFileDir in walkDirs("content/*"):
     fileName = splitPath(contentFileDIr).tail # 0.005s 
