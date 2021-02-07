@@ -120,6 +120,9 @@ proc init(siteName: string) =
   createDir siteName & "/static"
   writeFile(siteName & "/config.json", configTemplate)
 
+proc server() =
+  discard execShellCmd("nimhttpd public")
+
 when isMainModule:
   import cligen
-  dispatchMulti([build], [init])
+  dispatchMulti([build], [init], [server])
