@@ -12,14 +12,14 @@
 
   <link rel="shortcut icon" type="image/png" href="$siteUrl/static/image/icon.png">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link id="style" rel="stylesheet" type="text/css" href="main.css">
+  <link id="style" rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 
 <h1>$siteTitle</h2>
 
 <ul>
 #for items in sortedPageConfigList:
-  <li><a href="$siteUrl/content/$items.filename/index.html">$items.date $items.title<a></li>
+  <li><a href="content/$items.filename/index.html">$items.date $items.title<a></li>
 #end for
 </ul>
 

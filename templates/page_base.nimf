@@ -12,7 +12,7 @@
 
   <link rel="shortcut icon" type="image/png" href="$siteUrl/static/image/icon.png">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link id="style" rel="stylesheet" type="text/css" href="../../main.css">
+  <link id="style" rel="stylesheet" type="text/css" href="../../css/main.css">
 </head>
 
 <h2>
@@ -24,11 +24,11 @@
 </div>
 
 #for category in items(pageCategories) :
-  <a href="$siteUrl/categories/$category">/$category</a>
+  <a href="../../categories/$category">/$category</a>
 #end for
 
 #for tag in items(pageTags) :
-  <a href="$siteUrl/tags/$tag">#$tag</a>
+  <a href="../../categories/$tag">#$tag</a>
 #end for
 
 <p>
@@ -36,5 +36,5 @@
 </p>
 
 <div class="footer">
-  <a href="$siteUrl">$siteTitle</a> | built in Nim
+  <a href="/">$siteTitle</a> | built in Nim
 </div>
