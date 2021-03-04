@@ -6,10 +6,10 @@ include "templates/index_base.nimf"
 include "templates/taxonomies_base.nimf"
 
 type
-  SiteConfig = object
+  SiteConfig = ref object
     title: string
     url: string
-  PageConfig = object
+  PageConfig = ref object
     date: string
     title: string
     categories: seq[string]
