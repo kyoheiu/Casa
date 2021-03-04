@@ -1,4 +1,5 @@
 import markdown, unicode, json, os, tables, strutils, algorithm, sequtils
+# import nimprof
 
 include "templates/page_base.nimf"
 include "templates/index_base.nimf"
@@ -17,7 +18,6 @@ type
 
 var
   countChange = 0
-
 var
   frontMatter: JsonNode
   pageContent: string
@@ -42,7 +42,7 @@ proc parseSiteConfig(file: string): SiteConfig =
   siteConfig = SiteConfig(title: siteTitle, url: siteUrl)
   return siteConfig
 
-proc parsePageContentToHtml(contentFileDir: string, fileName: string): string = 
+proc parsePageContentToHtml(contentFileDir: string, fileName: string): string =
   let mdFile = readFile(contentFileDir & "/" & fileName & ".md")
   result = markdown(mdFile)
 
@@ -80,7 +80,7 @@ proc build() =
   copyDir("css", "public/css")
   # for each content, generate content-html and config object
   for contentFileDir in walkDirs("content/*"):
-    fileName = splitPath(contentFileDIr).tail # 0.005s 
+    fileName = splitPath(contentFileDIr).tail # 0.005s
     pageContent = parsePageContentToHtml(contentFileDir, fileName) # 0.0770s
     frontMatter = parseFile(contentFileDir & "/" & fileName & ".json")
     frontMatter["filename"] = newJString(fileName)
