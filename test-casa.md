@@ -1,3 +1,3 @@
-| Command | Mean [s] | Min [s] | Max [s] | Relative |
+| Command | Mean [ms] | Min [ms] | Max [ms] | Relative |
 |:---|---:|---:|---:|---:|
-| `./casa build` | 3.069 ± 0.056 | 2.999 | 3.143 | 1.00 |
+| `./casa build` | 512.9 ± 4.2 | 501.9 | 518.3 | 1.00 |
