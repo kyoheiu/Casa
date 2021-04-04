@@ -1,4 +1,4 @@
-import markdown, unicode, json, os, tables, strutils, algorithm, sequtils
+import nmark, unicode, json, os, tables, strutils, algorithm, sequtils
 # import nimprof
 
 include "templates/page_base.nimf"
